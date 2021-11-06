@@ -1,8 +1,14 @@
 package br.com.ibb.digital.IBBcustomerOnboarding.models
 
-data class User(val id:Long,
-                val name: String,
-                val email: String,
-                val password: String) {
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
-}
+@Entity
+data class User(
+                @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+                val id:Long = 0 ,
+                val name: String = "",
+                val email: String = "",
+                val password: String = "")
