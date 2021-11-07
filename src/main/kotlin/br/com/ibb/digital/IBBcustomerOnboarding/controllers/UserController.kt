@@ -39,6 +39,10 @@ class UserController (val userRepository: UserRepository){
                 || user.password.length < 4){
                 errors.add("Senha inválida")
             }
+
+            if(userRepository.findByEmail(user.email) != null){
+                errors.add("Usuario já existe, tente fazer o login.")
+            }
             
             if (errors.size > 0){
                 return ResponseEntity(ErrorDTO(HttpStatus.BAD_REQUEST.value(), null, errors), HttpStatus.BAD_REQUEST)
