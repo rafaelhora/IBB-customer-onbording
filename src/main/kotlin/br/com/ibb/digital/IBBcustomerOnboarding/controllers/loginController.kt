@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 @RestController
 @RequestMapping("api/login")
-class loginController {
+class LoginController {
     private val LOGIN_TESTE = "admin@admin.com"
     private val SENHA_TESTE = "admin1234"
     @PostMapping

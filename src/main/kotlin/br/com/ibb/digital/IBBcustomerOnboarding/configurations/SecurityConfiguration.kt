@@ -19,8 +19,9 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable().authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/login").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/usuario").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/cadastro/checkCpf").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/cadastro/addUser").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/cadastro").permitAll()
             .anyRequest().authenticated()
         http.addFilter(JWTAuthFilter(authenticationManager(), jwtUtils))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
