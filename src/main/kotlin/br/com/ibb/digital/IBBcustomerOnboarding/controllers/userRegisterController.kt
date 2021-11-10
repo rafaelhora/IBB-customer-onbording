@@ -2,16 +2,16 @@ package br.com.ibb.digital.IBBcustomerOnboarding.controllers
 
 import br.com.ibb.digital.IBBcustomerOnboarding.dtos.ErrorDTO
 import br.com.ibb.digital.IBBcustomerOnboarding.dtos.cpfDTO
-import br.com.ibb.digital.IBBcustomerOnboarding.dtos.sucessDTO
+import br.com.ibb.digital.IBBcustomerOnboarding.dtos.SucessDTO
 import br.com.ibb.digital.IBBcustomerOnboarding.models.User
 import br.com.ibb.digital.IBBcustomerOnboarding.repositories.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.regex.Pattern
 
 
 @RestController
@@ -35,7 +35,7 @@ class UserRegisterController (val userRepository: UserRepository) {
         if(user != null){
             return ResponseEntity(ErrorDTO(HttpStatus.BAD_REQUEST.value(), "Usuário encontrado"), HttpStatus.BAD_REQUEST)
         }
-        return ResponseEntity(sucessDTO("Realizar cadastro"), HttpStatus.ACCEPTED)
+        return ResponseEntity(SucessDTO("Realizar cadastro"), HttpStatus.ACCEPTED)
 
     }
 
@@ -55,13 +55,17 @@ class UserRegisterController (val userRepository: UserRepository) {
             }
 
             if(user.email.isNullOrBlank() || user.email.isNullOrEmpty()
-                || user.email.length < 5){
+                || !isEmailValid(user.email)){
                 errors.add("Email inválido")
             }
 
             if(user.password.isNullOrBlank() || user.password.isNullOrEmpty()
                 || user.password.length < 4){
                 errors.add("Senha inválida")
+            }
+
+            if(!isPhoneValid(user.phone)){
+                errors.add("Telefone inválido")
             }
 
             val foundUser: User? = userRepository.findByEmail(user.email);
@@ -80,13 +84,28 @@ class UserRegisterController (val userRepository: UserRepository) {
             }
 
             userRepository.save(user)
-            return ResponseEntity(sucessDTO("Usuário cadastrado com sucesso"), HttpStatus.CREATED)
+            return ResponseEntity(SucessDTO("Usuário cadastrado com sucesso"), HttpStatus.CREATED)
         }catch(exception : Exception) {
             return ResponseEntity(ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Não foi possivel efetuar o login, tente novamente."), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
+    fun isEmailValid(email: String): Boolean {
+        return Pattern.compile(
+            "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]|[\\w-]{2,}))@"
+                    + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                    + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                    + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                    + "[0-9]{1,2}|25[0-5]|2[0-4][0-9]))|"
+                    + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$"
+        ).matcher(email).matches()
+    }
+
+    fun isPhoneValid(phone : String) : Boolean {
+        return true;
+        //return Pattern.compile("(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})").matcher(phone).matches()
+    }
 
     fun isDateValid(date : LocalDate) : Boolean {
         val now = LocalDate.now()
@@ -118,7 +137,6 @@ class UserRegisterController (val userRepository: UserRepository) {
 
         return numbers[9] == dv1 && numbers[10] == dv2
     }
-
 
 }
 

@@ -22,6 +22,7 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/api/cadastro/checkCpf").permitAll()
             .antMatchers(HttpMethod.POST, "/api/cadastro/addUser").permitAll()
             .antMatchers(HttpMethod.GET, "/api/cadastro").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/documentos/selfie").permitAll()
             .anyRequest().authenticated()
         http.addFilter(JWTAuthFilter(authenticationManager(), jwtUtils))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
