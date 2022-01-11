@@ -9,7 +9,8 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun findByEmail (email : String) : User?
     fun findByCpf(cpf : String) : User?
-    fun findByCpfAndPassword(cpf: String, password : String) : User?
+    //fun findByCpfAndPassword(cpf: String, password : String) : User?
+
 
 }
 

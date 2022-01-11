@@ -6,6 +6,7 @@ import br.com.ibb.digital.IBBcustomerOnboarding.dtos.loginResponseDTO
 import br.com.ibb.digital.IBBcustomerOnboarding.models.User
 import br.com.ibb.digital.IBBcustomerOnboarding.repositories.UserRepository
 import br.com.ibb.digital.IBBcustomerOnboarding.utils.JWTUtils
+import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
@@ -22,22 +23,26 @@ class LoginController (val userRepository: UserRepository){
     fun checkLogin (@RequestBody dto: LoginDTO) : ResponseEntity<Any>{
         try{
 
-            val user : User? = userRepository.findByCpfAndPassword(dto.cpf, dto.password)
-            if(/*dto == null ||*/ isCPF(dto.cpf) || dto.password.isNullOrEmpty() || dto.password.isNullOrBlank()){
+            if(!isCPF(dto.cpf) || dto.password.isNullOrEmpty() || dto.password.isNullOrBlank()){
                 return ResponseEntity(ErrorDTO(HttpStatus.BAD_REQUEST.value(),
                     "Entrada Inválida"), HttpStatus.BAD_REQUEST)
             }
 
+            val user : User? = userRepository.findByCpf(dto.cpf)
+
             if (user != null) {
-                if(dto.password != user.password){
+                if(!BCrypt.checkpw(dto.password,user.password)){
                     return ResponseEntity(ErrorDTO(HttpStatus.FORBIDDEN.value(), "Senha incorreta, tente novamente"),HttpStatus.FORBIDDEN)
                 }
+            } else {
+                return ResponseEntity(ErrorDTO(HttpStatus.NOT_FOUND.value(),
+                    "Usuário não encontrado"), HttpStatus.NOT_FOUND)
             }
 
             val token = JWTUtils().createToken(user.toString(),)
 
-            val tempUser = loginResponseDTO("Usuário Teste", dto.cpf, token)
-            return ResponseEntity(tempUser, HttpStatus.OK)
+            val response = loginResponseDTO(user!!.name, user.cpf, token)
+            return ResponseEntity(response, HttpStatus.OK)
 
         }catch(e: Exception){
             return ResponseEntity(ErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(),

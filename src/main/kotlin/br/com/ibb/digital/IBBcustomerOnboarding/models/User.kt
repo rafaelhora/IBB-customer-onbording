@@ -9,12 +9,12 @@ import javax.persistence.Id
 
 @Entity
 data class User(
-                @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-                val id:Long = 0 ,
-                val name: String = "",
-                val email: String = "",
-                val password: String = "",
-                val cpf: String = "",
-                val address: String ="",
-                val phone: String = "",
-                val birthdate: String = "")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+                val id:Long = 0,
+    val name: String = "",
+    val email: String = "",
+    var password: String = "",
+    val cpf: String = "",
+    val address: String ="",
+    val phone: String = "",
+    val birthdate: String = "")

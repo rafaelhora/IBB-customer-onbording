@@ -10,7 +10,6 @@ import springfox.documentation.spring.web.plugins.Docket
 
 @Configuration
 @EnableSwagger2
-
 class SwaggerConfiguration {
 
     @Bean

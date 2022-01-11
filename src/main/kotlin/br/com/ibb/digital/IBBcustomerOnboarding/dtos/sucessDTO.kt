@@ -1,4 +1,4 @@
 package br.com.ibb.digital.IBBcustomerOnboarding.dtos
 
-class SucessDTO (val msg : String) {
+data class SucessDTO (val msg : String) {
 }
